@@ -1,4 +1,3 @@
-
 async function searchProduct(){
 
 const product =
@@ -11,6 +10,7 @@ document
 .toLowerCase()
 .trim();
 
+
 if(!product){
 
 alert(
@@ -22,6 +22,8 @@ return;
 }
 
 
+try{
+
 const response =
 
 await fetch(
@@ -30,6 +32,7 @@ await fetch(
 
 );
 
+
 const products =
 
 await response.json();
@@ -37,13 +40,31 @@ await response.json();
 
 const filtered =
 
-products.filter(item=>
+products.filter(item =>
 
 item.title
 .toLowerCase()
-.includes(
-product
+.includes(product)
+
+||
+
+item.category
+.toLowerCase()
+.includes(product)
+
+||
+
+item.description
+.toLowerCase()
+.includes(product)
+
 )
+
+.sort(
+
+(a,b)=>
+
+a.price-b.price
 
 );
 
@@ -52,18 +73,35 @@ render(filtered);
 
 }
 
+catch(error){
+
+document
+.getElementById(
+"results"
+)
+.innerHTML =
+
+"<h2>Erro ao buscar produtos</h2>";
+
+console.log(error);
+
+}
+
+}
+
 
 
 function render(results){
 
-const area=
+const area =
 
 document
 .getElementById(
 "results"
 );
 
-area.innerHTML="";
+
+area.innerHTML = "";
 
 
 if(results.length===0){
@@ -75,6 +113,7 @@ area.innerHTML=
 return;
 
 }
+
 
 
 results.forEach(item=>{
@@ -90,6 +129,8 @@ class="product-image"
 
 src="${item.image}"
 
+alt="${item.title}"
+
 >
 
 <div class="info">
@@ -100,17 +141,15 @@ ${item.title}
 
 </h3>
 
-<div class="price">
+<div class="store">
 
-R$ ${item.price}
+${item.category}
 
 </div>
 
-<div class="store">
+<div class="price">
 
-Categoria:
-
-${item.category}
+R$ ${item.price}
 
 </div>
 
@@ -138,4 +177,3 @@ Ver produto
 
 
 }
-
