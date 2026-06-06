@@ -1,79 +1,3 @@
-const fakeDatabase = [
-
-{
-
-store:"Amazon",
-
-price:159.90,
-
-image:
-"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
-
-link:
-"https://amazon.com"
-
-},
-
-{
-
-store:"Mercado Livre",
-
-price:149.90,
-
-image:
-"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
-
-link:
-"https://mercadolivre.com.br"
-
-},
-
-{
-
-store:"Magazine Luiza",
-
-price:167.50,
-
-image:
-"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500",
-
-link:
-"https://magazineluiza.com.br"
-
-},
-
-{
-
-store:"Shopee",
-
-price:139.90,
-
-image:
-"https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500",
-
-link:
-"https://shopee.com.br"
-
-},
-
-{
-
-store:"Americanas",
-
-price:178.00,
-
-image:
-"https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500",
-
-link:
-"https://americanas.com.br"
-
-}
-
-];
-
-
-
 function searchProduct(){
 
 const product =
@@ -81,7 +5,9 @@ const product =
 document
 .getElementById(
 "productInput"
-).value.trim();
+)
+.value
+.trim();
 
 
 if(!product){
@@ -95,20 +21,100 @@ return;
 }
 
 
-const results =
+const encoded =
 
-[...fakeDatabase]
+encodeURIComponent(
+product
+);
 
-.sort(
+
+const stores=[
+
+{
+
+store:"Amazon",
+
+price:randomPrice(),
+
+link:
+`https://www.amazon.com.br/s?k=${encoded}`,
+
+image:
+`https://source.unsplash.com/400x400/?${encoded}`
+
+},
+
+{
+
+store:"Mercado Livre",
+
+price:randomPrice(),
+
+link:
+`https://lista.mercadolivre.com.br/${encoded}`,
+
+image:
+`https://source.unsplash.com/401x401/?${encoded}`
+
+},
+
+{
+
+store:"Magazine Luiza",
+
+price:randomPrice(),
+
+link:
+`https://www.magazineluiza.com.br/busca/${encoded}/`,
+
+image:
+`https://source.unsplash.com/402x402/?${encoded}`
+
+},
+
+{
+
+store:"Shopee",
+
+price:randomPrice(),
+
+link:
+`https://shopee.com.br/search?keyword=${encoded}`,
+
+image:
+`https://source.unsplash.com/403x403/?${encoded}`
+
+}
+
+];
+
+
+stores.sort(
+
 (a,b)=>
+
 a.price-b.price
+
 );
 
 
 render(
-results,
+stores,
 product
 );
+
+}
+
+
+
+function randomPrice(){
+
+return (
+
+Math.random()*100
++50
+
+).toFixed(2);
 
 }
 
@@ -119,13 +125,12 @@ results,
 product
 ){
 
-const area =
+const area=
 
 document
 .getElementById(
 "results"
 );
-
 
 area.innerHTML="";
 
@@ -138,9 +143,18 @@ area.innerHTML += `
 <div class="card">
 
 <img
+
 class="product-image"
+
 src="${item.image}"
+
 alt="${product}"
+
+onerror="
+this.src=
+'https://via.placeholder.com/300'
+"
+
 >
 
 <div class="info">
@@ -159,7 +173,7 @@ ${item.store}
 
 <div class="price">
 
-R$ ${item.price.toFixed(2)}
+R$ ${item.price}
 
 </div>
 
