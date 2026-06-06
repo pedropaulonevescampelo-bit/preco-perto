@@ -1,4 +1,5 @@
-function searchProduct(){
+
+async function searchProduct(){
 
 const product =
 
@@ -7,8 +8,8 @@ document
 "productInput"
 )
 .value
+.toLowerCase()
 .trim();
-
 
 if(!product){
 
@@ -21,109 +22,39 @@ return;
 }
 
 
-const encoded =
+const response =
 
-encodeURIComponent(
+await fetch(
+
+"https://fakestoreapi.com/products"
+
+);
+
+const products =
+
+await response.json();
+
+
+const filtered =
+
+products.filter(item=>
+
+item.title
+.toLowerCase()
+.includes(
 product
-);
-
-
-const stores=[
-
-{
-
-store:"Amazon",
-
-price:randomPrice(),
-
-link:
-`https://www.amazon.com.br/s?k=${encoded}`,
-
-image:
-`https://source.unsplash.com/400x400/?${encoded}`
-
-},
-
-{
-
-store:"Mercado Livre",
-
-price:randomPrice(),
-
-link:
-`https://lista.mercadolivre.com.br/${encoded}`,
-
-image:
-`https://source.unsplash.com/401x401/?${encoded}`
-
-},
-
-{
-
-store:"Magazine Luiza",
-
-price:randomPrice(),
-
-link:
-`https://www.magazineluiza.com.br/busca/${encoded}/`,
-
-image:
-`https://source.unsplash.com/402x402/?${encoded}`
-
-},
-
-{
-
-store:"Shopee",
-
-price:randomPrice(),
-
-link:
-`https://shopee.com.br/search?keyword=${encoded}`,
-
-image:
-`https://source.unsplash.com/403x403/?${encoded}`
-
-}
-
-];
-
-
-stores.sort(
-
-(a,b)=>
-
-a.price-b.price
+)
 
 );
 
 
-render(
-stores,
-product
-);
+render(filtered);
 
 }
 
 
 
-function randomPrice(){
-
-return (
-
-Math.random()*100
-+50
-
-).toFixed(2);
-
-}
-
-
-
-function render(
-results,
-product
-){
+function render(results){
 
 const area=
 
@@ -133,6 +64,17 @@ document
 );
 
 area.innerHTML="";
+
+
+if(results.length===0){
+
+area.innerHTML=
+
+"<h2>Nenhum produto encontrado</h2>";
+
+return;
+
+}
 
 
 results.forEach(item=>{
@@ -148,28 +90,15 @@ class="product-image"
 
 src="${item.image}"
 
-alt="${product}"
-
-onerror="
-this.src=
-'https://via.placeholder.com/300'
-"
-
 >
 
 <div class="info">
 
 <h3>
 
-${product}
+${item.title}
 
 </h3>
-
-<div class="store">
-
-${item.store}
-
-</div>
 
 <div class="price">
 
@@ -177,17 +106,25 @@ R$ ${item.price}
 
 </div>
 
+<div class="store">
+
+Categoria:
+
+${item.category}
+
+</div>
+
 <a
 
 class="link-button"
 
-href="${item.link}"
+href="#"
 
 target="_blank"
 
 >
 
-Ir para loja
+Ver produto
 
 </a>
 
@@ -201,3 +138,4 @@ Ir para loja
 
 
 }
+
